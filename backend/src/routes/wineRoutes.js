@@ -7,8 +7,12 @@ import {
   deleteWineHandler
 } from '../controllers/wineController.js';
 import { validateWine, validateWineUpdate } from '../middlewares/validateWine.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();
+
+// Todas las rutas de vinos requieren autenticación
+router.use(authMiddleware);
 
 // GET /api/wines - Obtener todos los vinos
 router.get('/', getAllWines);

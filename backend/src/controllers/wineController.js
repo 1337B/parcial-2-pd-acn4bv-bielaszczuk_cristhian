@@ -12,8 +12,7 @@ import {
  */
 export async function getAllWines(req, res, next) {
   try {
-    // TODO: Reemplazar con userId real desde JWT
-    const userId = 'demo-user';
+    const userId = req.user.id;
 
     const wines = findAllByUserId(userId);
 
@@ -29,8 +28,7 @@ export async function getAllWines(req, res, next) {
  */
 export async function getWineById(req, res, next) {
   try {
-    // TODO: Reemplazar con userId real desde JWT
-    const userId = 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const wine = findByIdAndUser(id, userId);
@@ -51,8 +49,7 @@ export async function getWineById(req, res, next) {
  */
 export async function createWineHandler(req, res, next) {
   try {
-    // TODO: Reemplazar con userId real desde JWT
-    const userId = 'demo-user';
+    const userId = req.user.id;
 
     const wineData = {
       name: req.body.name,
@@ -83,8 +80,7 @@ export async function createWineHandler(req, res, next) {
  */
 export async function updateWineHandler(req, res, next) {
   try {
-    // TODO: Reemplazar con userId real desde JWT
-    const userId = 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const partialData = {
@@ -127,8 +123,7 @@ export async function updateWineHandler(req, res, next) {
  */
 export async function deleteWineHandler(req, res, next) {
   try {
-    // TODO: Reemplazar con userId real desde JWT
-    const userId = 'demo-user';
+    const userId = req.user.id;
     const { id } = req.params;
 
     const deleted = deleteWine(id, userId);
