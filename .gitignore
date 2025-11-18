@@ -3,5 +3,8 @@ frontend/node_modules
 dist
 .vscode
 .idea
-
 .idea/
+
+# Environment variables
+.env.local
+.env*.local
