@@ -1,5 +1,5 @@
-import { getDatabase } from '../database/db.js';
 import crypto from 'crypto';
+import { getDatabase } from '../database/db.js';
 
 /**
  * Busca una consulta de IA existente para un vino
