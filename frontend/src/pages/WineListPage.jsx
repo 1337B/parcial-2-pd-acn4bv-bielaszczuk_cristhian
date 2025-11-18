@@ -1,6 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function WineListPage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
@@ -9,6 +18,11 @@ function WineListPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-cream-50">SommelIAr</h1>
+              {user && (
+                <span className="ml-4 text-cream-200 text-sm">
+                  {user.email}
+                </span>
+              )}
             </div>
             <div className="flex items-center space-x-4">
               <Link
@@ -20,7 +34,10 @@ function WineListPage() {
               <button className="bg-wine-700 hover:bg-wine-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
                 Agregar Vino
               </button>
-              <button className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+              <button
+                onClick={handleLogout}
+                className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
                 Salir
               </button>
             </div>
