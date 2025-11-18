@@ -73,6 +73,16 @@ function WineListPage() {
   };
 
   const handleConsultSommelier = async (id) => {
+    // Buscar el vino en el estado
+    const wine = wines.find((w) => w.id === id);
+
+    // Si ya tiene notas de IA guardadas, ir directo al detalle
+    if (wine && wine.aiNotes) {
+      navigate(`/wines/${id}`);
+      return;
+    }
+
+    // Si no tiene notas, consultar a la IA
     try {
       const result = await consultSommelier(token, id);
 

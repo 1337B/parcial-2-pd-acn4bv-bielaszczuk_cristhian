@@ -147,6 +147,7 @@ export async function getSommelierNotes(req, res, next) {
   try {
     const userId = req.user.id;
     const { id } = req.params;
+    const { forceRegenerate } = req.query; // Opción para forzar regeneración
 
     // Buscar el vino en la base de datos
     const wine = findByIdAndUser(id, userId);
@@ -155,18 +156,62 @@ export async function getSommelierNotes(req, res, next) {
       return res.status(404).json({ error: 'Wine not found' });
     }
 
-    // Generar las notas del sommelier usando los datos reales del vino
-    const aiNotes = generateSommelierNotes(wine);
+    // Importar funciones del modelo de consultas
+    const {
+      findConsultationByWineId,
+      createConsultation,
+      markWineAsConsulted
+    } = await import('../models/aiConsultationModel.js');
 
-    // Opcional: Persistir las notas generadas en la base de datos
-    // Esto permite recuperarlas más tarde sin tener que regenerarlas
-    const updatedWine = updateWine(id, userId, { aiNotes });
+    let aiNotes;
+    let fromCache = false;
+
+    // Verificar si ya existe una consulta previa (a menos que se fuerce regenerar)
+    if (!forceRegenerate) {
+      const existingConsultation = findConsultationByWineId(id);
+
+      if (existingConsultation) {
+        console.log(`Usando consulta cacheada para vino ${id}`);
+        aiNotes = existingConsultation.ai_response;
+        fromCache = true;
+      }
+    }
+
+    // Si no hay consulta previa o se fuerza regenerar, llamar a la IA
+    if (!aiNotes) {
+      console.log(`Generando nueva consulta para vino ${id}`);
+
+      // Generar las notas del sommelier usando IA
+      const { aiNotes: generatedNotes, prompt, modelUsed, tokensUsed } = await generateSommelierNotes(wine);
+      aiNotes = generatedNotes;
+
+      // Guardar la consulta en la tabla de cache
+      createConsultation(
+        id,
+        userId,
+        prompt,
+        aiNotes,
+        modelUsed || 'gpt-4o-mini',
+        tokensUsed
+      );
+
+      // Marcar el vino como consultado
+      markWineAsConsulted(id, userId);
+
+      // Persistir las notas en el campo ai_notes del vino
+      updateWine(id, userId, { aiNotes });
+    }
+
+    // Obtener el vino actualizado
+    const updatedWine = findByIdAndUser(id, userId);
 
     // Devolver las notas generadas
     res.json({
       data: {
         aiNotes,
-        wine: updatedWine
+        wine: updatedWine,
+        fromCache,
+        consulted: true
       }
     });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { Card, Button, Badge } from 'flowbite-react';
+import { Card, Badge } from 'flowbite-react';
 import { HiEye, HiPencil, HiTrash, HiSparkles } from 'react-icons/hi';
 
 function WineCard({ wine, onView, onEdit, onDelete, onConsultSommelier }) {
@@ -66,45 +66,43 @@ function WineCard({ wine, onView, onEdit, onDelete, onConsultSommelier }) {
       </div>
 
       {/* Botones de accion */}
-      <div className="grid grid-cols-2 gap-2 mt-4">
-        <Button
-          size="sm"
-          color="light"
-          onClick={() => onView(wine.id)}
-          className="flex items-center justify-center gap-1"
-        >
-          <HiEye className="h-4 w-4" />
-          Ver
-        </Button>
+      <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
+        {/* Primera fila: Ver y Editar */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => onView(wine.id)}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-wine-500 transition-colors"
+          >
+            <HiEye className="h-4 w-4" />
+            Ver
+          </button>
 
-        <Button
-          size="sm"
-          color="light"
-          onClick={() => onEdit(wine.id)}
-          className="flex items-center justify-center gap-1"
-        >
-          <HiPencil className="h-4 w-4" />
-          Editar
-        </Button>
+          <button
+            onClick={() => onEdit(wine.id)}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-wine-500 transition-colors"
+          >
+            <HiPencil className="h-4 w-4" />
+            Editar
+          </button>
+        </div>
 
-        <Button
-          size="sm"
-          className="bg-wine-700 hover:bg-wine-800 flex items-center justify-center gap-1"
+        {/* Segunda fila: SommelIAr completo */}
+        <button
           onClick={() => onConsultSommelier(wine.id)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-wine-700 rounded-lg hover:bg-wine-800 focus:ring-2 focus:ring-wine-500 transition-colors"
         >
-          <HiSparkles className="h-4 w-4" />
-          SommelIAr
-        </Button>
+          <HiSparkles className="h-5 w-5" />
+          Consultar SommelIAr
+        </button>
 
-        <Button
-          size="sm"
-          color="failure"
+        {/* Tercera fila: Eliminar completo */}
+        <button
           onClick={() => onDelete(wine.id)}
-          className="flex items-center justify-center gap-1"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-700 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 focus:ring-2 focus:ring-red-500 transition-colors"
         >
           <HiTrash className="h-4 w-4" />
           Eliminar
-        </Button>
+        </button>
       </div>
     </Card>
   );

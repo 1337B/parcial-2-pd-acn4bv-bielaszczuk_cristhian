@@ -44,10 +44,48 @@ export function initializeDatabase() {
       notes TEXT,
       image_url TEXT,
       ai_notes TEXT,
+      ai_consulted INTEGER DEFAULT 0,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
+  `);
+
+  // Migrar bases de datos existentes: agregar columna ai_consulted si no existe
+  try {
+    const columns = db.prepare("PRAGMA table_info(wines)").all();
+    const hasAiConsulted = columns.some(col => col.name === 'ai_consulted');
+
+    if (!hasAiConsulted) {
+      console.log('Migrando base de datos: agregando columna ai_consulted...');
+      db.exec(`ALTER TABLE wines ADD COLUMN ai_consulted INTEGER DEFAULT 0;`);
+      console.log('Migración completada exitosamente');
+    }
+  } catch (error) {
+    // Si falla, probablemente la columna ya existe o hay otro problema
+    console.log('Nota: columna ai_consulted ya existe o no se pudo agregar');
+  }
+
+  // Tabla para cachear consultas de IA y evitar regenerar
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS wine_ai_consultations (
+      id TEXT PRIMARY KEY,
+      wine_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      prompt_sent TEXT NOT NULL,
+      ai_response TEXT NOT NULL,
+      model_used TEXT NOT NULL,
+      tokens_used INTEGER,
+      consulted_at TEXT NOT NULL,
+      FOREIGN KEY (wine_id) REFERENCES wines(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
+  // Índice para búsqueda rápida
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_wine_ai_consultations_wine_id 
+    ON wine_ai_consultations(wine_id);
   `);
 }
 
