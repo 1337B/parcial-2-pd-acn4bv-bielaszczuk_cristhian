@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -7,7 +9,6 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Al montar, recuperar token y user desde localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:4000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,11 +44,9 @@ export function AuthProvider({ children }) {
 
       const { token: newToken, user: newUser } = data;
 
-      // Guardar en estado
       setToken(newToken);
       setUser(newUser);
 
-      // Guardar en localStorage
       localStorage.setItem('token', newToken);
       localStorage.setItem('user', JSON.stringify(newUser));
 
@@ -60,7 +59,7 @@ export function AuthProvider({ children }) {
 
   const register = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:4000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +73,6 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || 'Error al registrarse');
       }
 
-      // Despues de registrar, hacer login automatico
       return await login(email, password);
     } catch (error) {
       console.error('Register error:', error);
@@ -83,11 +81,9 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    // Limpiar estado
     setUser(null);
     setToken(null);
 
-    // Limpiar localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   };
@@ -112,4 +108,3 @@ export function useAuth() {
   }
   return context;
 }
-

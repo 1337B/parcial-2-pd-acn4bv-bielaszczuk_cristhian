@@ -5,6 +5,10 @@ import { HiPlus, HiInformationCircle } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { fetchWines, deleteWine, consultSommelier } from '../services/apiClient';
 import WineCard from '../components/WineCard';
+import Footer from '../components/Footer';
+import LoadingModal from '../components/LoadingModal';
+import BurgerMenu from '../components/BurgerMenu';
+import wineglassIcon from '../assets/wineglass.svg';
 
 function WineListPage() {
   const { user, token, logout } = useAuth();
@@ -13,13 +17,12 @@ function WineListPage() {
   const [wines, setWines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [consultingWineId, setConsultingWineId] = useState(null);
 
-  // Cargar vinos al montar el componente
   useEffect(() => {
     if (token) {
       loadWines();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const loadWines = async () => {
@@ -64,7 +67,6 @@ function WineListPage() {
 
     try {
       await deleteWine(token, id);
-      // Filtrar el vino eliminado del estado
       setWines((prevWines) => prevWines.filter((w) => w.id !== id));
     } catch (err) {
       console.error('Error deleting wine:', err);
@@ -73,24 +75,29 @@ function WineListPage() {
   };
 
   const handleConsultSommelier = async (id) => {
-    // Buscar el vino en el estado
     const wine = wines.find((w) => w.id === id);
 
-    // Si ya tiene notas de IA guardadas, ir directo al detalle
     if (wine && wine.aiNotes) {
       navigate(`/wines/${id}`);
       return;
     }
 
-    // Si no tiene notas, consultar a la IA
+    setConsultingWineId(id);
     try {
       const result = await consultSommelier(token, id);
 
-      // Navegar a la vista de detalle donde se mostraran las notas
-      navigate(`/wines/${id}`, { state: { sommelierNotes: result.aiNotes } });
+      setWines((prevWines) =>
+        prevWines.map((w) => (w.id === id ? { ...w, aiNotes: result.aiNotes } : w))
+      );
+
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      navigate(`/wines/${id}`, { state: { aiNotes: result.aiNotes } });
     } catch (err) {
       console.error('Error consulting sommelier:', err);
-      alert(`Error al consultar SommelIAr: ${err.message}`);
+      alert(`Error al consultar SommelIApp: ${err.message}`);
+    } finally {
+      setConsultingWineId(null);
     }
   };
 
@@ -100,22 +107,23 @@ function WineListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <nav className="bg-wine-900 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-cream-50">SommelIAr</h1>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img src={wineglassIcon} alt="Wine Glass" className="w-7 h-7 sm:w-8 sm:h-8" />
+              <h1 className="text-xl sm:text-2xl font-bold text-cream-50">SommelIApp</h1>
               {user && (
-                <span className="ml-4 text-cream-200 text-sm">
+                <span className="hidden lg:inline-block ml-4 text-cream-200 text-sm">
                   {user.email}
                 </span>
               )}
             </div>
-            <div className="flex items-center space-x-4">
+
+            <div className="hidden md:flex items-center gap-4">
               <Link
                 to="/wines"
-                className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Mis Vinos
               </Link>
@@ -129,23 +137,23 @@ function WineListPage() {
               </Button>
               <button
                 onClick={handleLogout}
-                className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                className="text-cream-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Salir
               </button>
             </div>
+
+            <BurgerMenu user={user} onLogout={handleLogout} />
           </div>
         </div>
       </nav>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-wine-900 mb-2">Mis Vinos</h2>
           <p className="text-gray-600">Gestiona tu coleccion personal de vinos</p>
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div className="flex justify-center items-center py-12">
             <Spinner size="xl" color="purple" />
@@ -153,7 +161,6 @@ function WineListPage() {
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && (
           <Alert color="failure" icon={HiInformationCircle} className="mb-6">
             <span className="font-medium">Error:</span> {error}
@@ -163,7 +170,6 @@ function WineListPage() {
           </Alert>
         )}
 
-        {/* Empty State */}
         {!loading && !error && wines.length === 0 && (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="max-w-md mx-auto">
@@ -199,9 +205,8 @@ function WineListPage() {
           </div>
         )}
 
-        {/* Wine Grid */}
         {!loading && !error && wines.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {wines.map((wine) => (
               <WineCard
                 key={wine.id}
@@ -215,6 +220,13 @@ function WineListPage() {
           </div>
         )}
       </div>
+
+      <LoadingModal
+        isOpen={consultingWineId !== null}
+        message="SommelIApp está analizando tu vino..."
+      />
+
+      <Footer />
     </div>
   );
 }

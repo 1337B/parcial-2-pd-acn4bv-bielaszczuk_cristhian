@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Alert, Spinner } from 'flowbite-react';
 import { HiArrowLeft, HiInformationCircle } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { createWine, getWineById, updateWine } from '../services/apiClient';
 import WineForm from '../components/WineForm';
+import Footer from '../components/Footer';
 
 function WineFormPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const { id } = useParams(); // Si hay ID, estamos editando
+  const { id } = useParams();
 
   const [initialValues, setInitialValues] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -17,15 +19,12 @@ function WineFormPage() {
 
   const isEditMode = Boolean(id);
 
-  // Si estamos en modo edicion, cargar los datos del vino
   useEffect(() => {
     if (isEditMode && token) {
       loadWine();
     } else {
-      // Modo creacion: valores vacios
       setInitialValues({});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, token]);
 
   const loadWine = async () => {
@@ -48,19 +47,17 @@ function WineFormPage() {
 
     try {
       if (isEditMode) {
-        // Actualizar vino existente
         await updateWine(token, id, values);
+        toast.success('¡Vino actualizado exitosamente en tu colección!');
       } else {
-        // Crear nuevo vino
         await createWine(token, values);
+        toast.success('¡Vino agregado a tu colección con elegancia!');
       }
 
-      // Redirigir a la lista de vinos
       navigate('/wines');
     } catch (err) {
       console.error('Error submitting wine:', err);
       setError(err.message || 'Error al guardar el vino');
-      // Re-lanzar el error para que WineForm lo maneje
       throw err;
     }
   };
@@ -72,7 +69,6 @@ function WineFormPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        {/* Boton volver */}
         <Button
           color="light"
           onClick={handleCancel}
@@ -83,7 +79,6 @@ function WineFormPage() {
         </Button>
 
         <div className="bg-white rounded-lg shadow-lg p-8">
-          {/* Titulo */}
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-wine-900 mb-2">
               {isEditMode ? 'Editar Vino' : 'Agregar Nuevo Vino'}
@@ -98,7 +93,6 @@ function WineFormPage() {
             </p>
           </div>
 
-          {/* Loading state mientras carga datos para editar */}
           {loading && (
             <div className="flex justify-center items-center py-12">
               <Spinner size="xl" color="purple" />
@@ -106,14 +100,12 @@ function WineFormPage() {
             </div>
           )}
 
-          {/* Error alert */}
           {error && !loading && (
             <Alert color="failure" icon={HiInformationCircle} className="mb-6">
               <span className="font-medium">Error:</span> {error}
             </Alert>
           )}
 
-          {/* Formulario */}
           {!loading && initialValues && (
             <div>
               <WineForm
@@ -122,7 +114,6 @@ function WineFormPage() {
                 submitLabel={isEditMode ? 'Guardar Cambios' : 'Crear Vino'}
               />
 
-              {/* Boton cancelar */}
               <div className="mt-4 flex justify-end">
                 <Button
                   color="light"
@@ -135,6 +126,8 @@ function WineFormPage() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

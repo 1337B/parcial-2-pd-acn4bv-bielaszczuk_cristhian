@@ -1,6 +1,4 @@
-// Central API client for wine-related backend calls
-// If you later define VITE_API_BASE_URL in a .env, it will override the hardcoded fallback.
-const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) || 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 /**
  * Internal helper to perform a fetch request with proper headers and error handling.
@@ -21,7 +19,6 @@ async function apiRequest(path, options = {}, token) {
     Authorization: `Bearer ${token}`,
   };
 
-  // If we are sending a body and no explicit Content-Type, set JSON
   if (options.body && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
@@ -38,23 +35,19 @@ async function apiRequest(path, options = {}, token) {
 
   let payload;
   try {
-    // Try to parse JSON (backend always returns JSON)
     payload = await response.json();
   } catch (parseErr) {
     if (!response.ok) {
       throw new Error(`Error ${response.status} sin cuerpo JSON en ${path}`);
     }
-    // If OK but no JSON, just return undefined
     return undefined;
   }
 
   if (!response.ok) {
-    // Try to read explicit error message from backend
     const backendMessage = payload && (payload.error || payload.message);
     throw new Error(backendMessage || `Error ${response.status} en ${path}`);
   }
 
-  // Backend for wines usually wraps data in { data: ... }
   return Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : payload;
 }
 
@@ -121,7 +114,7 @@ export async function deleteWine(token, id) {
 }
 
 /**
- * Consulta SommelIAr para generar notas de sommelier
+ * Consulta SommelIApp para generar notas de sommelier
  * @param {string} token JWT
  * @param {string} id ID del vino
  */
@@ -132,7 +125,6 @@ export async function consultSommelier(token, id) {
   }, token);
 }
 
-// Optional: helper to set a different base URL dynamically (e.g. in tests)
 export function getApiBaseUrl() {
   return API_BASE_URL;
 }

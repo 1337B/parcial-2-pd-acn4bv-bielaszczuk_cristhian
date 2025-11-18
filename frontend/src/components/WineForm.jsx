@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Label, TextInput, Textarea, Button } from 'flowbite-react';
 
 function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
-  // Estado del formulario con valores iniciales
   const [formData, setFormData] = useState({
     name: initialValues.name || '',
     winery: initialValues.winery || '',
@@ -18,20 +17,16 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
     imageUrl: initialValues.imageUrl || '',
   });
 
-  // Estado para errores de validacion
   const [errors, setErrors] = useState({});
 
-  // Estado de carga durante submit
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Manejar cambios en los inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    // Limpiar error del campo al modificarlo
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -40,21 +35,17 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
     }
   };
 
-  // Validar formulario
   const validate = () => {
     const newErrors = {};
 
-    // Nombre requerido
     if (!formData.name.trim()) {
       newErrors.name = 'El nombre es requerido';
     }
 
-    // Cepa requerida
     if (!formData.grape.trim()) {
       newErrors.grape = 'La cepa es requerida';
     }
 
-    // Año requerido y validacion
     if (!formData.year) {
       newErrors.year = 'El año es requerido';
     } else {
@@ -65,7 +56,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
       }
     }
 
-    // Rating requerido y validacion
     if (!formData.rating) {
       newErrors.rating = 'La calificacion es requerida';
     } else {
@@ -78,34 +68,28 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
     return newErrors;
   };
 
-  // Manejar submit del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    // Limpiar errores
     setErrors({});
     setIsSubmitting(true);
 
     try {
-      // Preparar datos (convertir year y rating a numeros)
       const dataToSubmit = {
         ...formData,
         year: formData.year ? parseInt(formData.year, 10) : null,
         rating: formData.rating ? parseFloat(formData.rating) : null,
       };
 
-      // Llamar al callback onSubmit
       await onSubmit(dataToSubmit);
     } catch (error) {
       console.error('Error submitting form:', error);
-      // El error se maneja en el padre (WineFormPage)
     } finally {
       setIsSubmitting(false);
     }
@@ -113,7 +97,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Nombre - Requerido */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="name" value="Nombre del vino" className="font-medium" />
@@ -134,7 +117,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         )}
       </div>
 
-      {/* Bodega */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="winery" value="Bodega" className="font-medium" />
@@ -150,7 +132,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         />
       </div>
 
-      {/* Cepa - Requerida */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="grape" value="Cepa" className="font-medium" />
@@ -171,9 +152,7 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         )}
       </div>
 
-      {/* Año y Rating en una fila */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Año - Requerido */}
         <div>
           <div className="mb-2 block">
             <Label htmlFor="year" value="Año" className="font-medium" />
@@ -196,7 +175,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
           )}
         </div>
 
-        {/* Rating - Requerido */}
         <div>
           <div className="mb-2 block">
             <Label htmlFor="rating" value="Calificacion (0-5)" className="font-medium" />
@@ -221,9 +199,7 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         </div>
       </div>
 
-      {/* Pais y Region en una fila */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Pais */}
         <div>
           <div className="mb-2 block">
             <Label htmlFor="country" value="Pais" className="font-medium" />
@@ -239,7 +215,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
           />
         </div>
 
-        {/* Region */}
         <div>
           <div className="mb-2 block">
             <Label htmlFor="region" value="Region" className="font-medium" />
@@ -256,7 +231,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         </div>
       </div>
 
-      {/* Lugar */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="place" value="Lugar de compra/degustacion" className="font-medium" />
@@ -272,7 +246,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         />
       </div>
 
-      {/* Aromas */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="aromas" value="Aromas" className="font-medium" />
@@ -288,7 +261,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         />
       </div>
 
-      {/* Sabores */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="flavors" value="Sabores" className="font-medium" />
@@ -304,7 +276,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         />
       </div>
 
-      {/* Notas personales */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="notes" value="Notas personales" className="font-medium" />
@@ -320,7 +291,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         />
       </div>
 
-      {/* URL de imagen */}
       <div>
         <div className="mb-2 block">
           <Label htmlFor="imageUrl" value="URL de imagen" className="font-medium" />
@@ -339,7 +309,6 @@ function WineForm({ initialValues = {}, onSubmit, submitLabel = 'Guardar' }) {
         </p>
       </div>
 
-      {/* Boton de submit */}
       <div className="flex justify-end space-x-4 pt-4">
         <Button
           type="submit"

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, TextInput, Button, Alert } from 'flowbite-react';
-import { HiMail, HiLockClosed, HiInformationCircle } from 'react-icons/hi';
+import { HiInformationCircle } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
+import wineglassIcon from '../assets/wineglass.svg';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,22 +34,21 @@ function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-wine-900 via-wine-800 to-wine-950 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="bg-cream-50 rounded-xl shadow-2xl p-8">
-          {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-wine-900 mb-2">SommelIAr</h1>
-            <p className="text-wine-700">Inicia sesion en tu cuenta</p>
+            <h1 className="text-4xl font-bold text-wine-900 mb-4">SommelIApp</h1>
+            <div className="flex justify-center mb-4">
+              <img src={wineglassIcon} alt="Wine Glass" className="w-16 h-16" />
+            </div>
+            <p className="text-wine-700 text-lg">Inicia sesión en tu cuenta</p>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <Alert color="failure" icon={HiInformationCircle} className="mb-6">
               <span className="font-medium">Error:</span> {error}
             </Alert>
           )}
 
-          {/* Form */}
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Email Input */}
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Email" className="text-wine-900 font-medium" />
@@ -56,18 +56,15 @@ function LoginPage() {
               <TextInput
                 id="email"
                 type="email"
-                icon={HiMail}
                 placeholder="tu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
                 color="gray"
-                className="focus:border-wine-500 focus:ring-wine-500"
               />
             </div>
 
-            {/* Password Input */}
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="password" value="Contraseña" className="text-wine-900 font-medium" />
@@ -75,7 +72,6 @@ function LoginPage() {
               <TextInput
                 id="password"
                 type="password"
-                icon={HiLockClosed}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -85,7 +81,6 @@ function LoginPage() {
               />
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading}
@@ -118,7 +113,6 @@ function LoginPage() {
             </Button>
           </form>
 
-          {/* Register Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-wine-700">
               No tenes cuenta?{' '}

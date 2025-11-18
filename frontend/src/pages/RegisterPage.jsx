@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Label, TextInput, Button, Alert } from 'flowbite-react';
-import { HiMail, HiLockClosed, HiInformationCircle, HiCheckCircle } from 'react-icons/hi';
+import { HiInformationCircle, HiCheckCircle } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
+import wineglassIcon from '../assets/wineglass.svg';
 
 function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -18,13 +19,11 @@ function RegisterPage() {
     e.preventDefault();
     setError('');
 
-    // Validar que las contraseñas coincidan
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       return;
     }
 
-    // Validar longitud de contraseña
     if (password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres');
       return;
@@ -35,7 +34,6 @@ function RegisterPage() {
     const result = await register(email, password);
 
     if (result.success) {
-      // Login automatico exitoso, redirigir a /wines
       navigate('/wines');
     } else {
       setError(result.error || 'Error al registrarse');
@@ -44,7 +42,6 @@ function RegisterPage() {
     setLoading(false);
   };
 
-  // Verificar si las contraseñas coinciden para mostrar indicador visual
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const passwordsDontMatch = password && confirmPassword && password !== confirmPassword;
 
@@ -52,22 +49,21 @@ function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-wine-900 via-wine-800 to-wine-950 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full">
         <div className="bg-cream-50 rounded-xl shadow-2xl p-8">
-          {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-wine-900 mb-2">SommelIAr</h1>
-            <p className="text-wine-700">Crea tu cuenta</p>
+            <h1 className="text-4xl font-bold text-wine-900 mb-4">SommelIApp</h1>
+            <div className="flex justify-center mb-4">
+              <img src={wineglassIcon} alt="Wine Glass" className="w-16 h-16" />
+            </div>
+            <p className="text-wine-700 text-lg">Crea tu cuenta</p>
           </div>
 
-          {/* Error Alert */}
           {error && (
             <Alert color="failure" icon={HiInformationCircle} className="mb-6">
               <span className="font-medium">Error:</span> {error}
             </Alert>
           )}
 
-          {/* Form */}
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {/* Email Input */}
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Email" className="text-wine-900 font-medium" />
@@ -75,7 +71,6 @@ function RegisterPage() {
               <TextInput
                 id="email"
                 type="email"
-                icon={HiMail}
                 placeholder="tu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +80,6 @@ function RegisterPage() {
               />
             </div>
 
-            {/* Password Input */}
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="password" value="Contraseña" className="text-wine-900 font-medium" />
@@ -93,8 +87,7 @@ function RegisterPage() {
               <TextInput
                 id="password"
                 type="password"
-                icon={HiLockClosed}
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -109,7 +102,6 @@ function RegisterPage() {
               />
             </div>
 
-            {/* Confirm Password Input */}
             <div>
               <div className="mb-2 block">
                 <Label
@@ -121,8 +113,7 @@ function RegisterPage() {
               <TextInput
                 id="confirmPassword"
                 type="password"
-                icon={passwordsMatch ? HiCheckCircle : HiLockClosed}
-                placeholder="Repeti tu contraseña"
+                placeholder="Repetí tu contraseña"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
@@ -131,15 +122,18 @@ function RegisterPage() {
                 color={passwordsMatch ? 'success' : passwordsDontMatch ? 'failure' : 'gray'}
                 helperText={
                   passwordsDontMatch ? (
-                    <span className="text-xs text-red-600">Las contraseñas no coinciden</span>
+                    <span className="text-xs text-red-600 flex items-center gap-1">
+                      Las contraseñas no coinciden
+                    </span>
                   ) : passwordsMatch ? (
-                    <span className="text-xs text-green-600">Las contraseñas coinciden</span>
+                    <span className="text-xs text-green-600 flex items-center gap-1">
+                      <HiCheckCircle className="h-3 w-3" /> Las contraseñas coinciden
+                    </span>
                   ) : null
                 }
               />
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               disabled={loading || passwordsDontMatch}
@@ -172,7 +166,6 @@ function RegisterPage() {
             </Button>
           </form>
 
-          {/* Login Link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-wine-700">
               Ya tenes cuenta?{' '}
