@@ -1,9 +1,6 @@
 import crypto from 'crypto';
 import { getDatabase } from '../database/db.js';
 
-/**
- * Mapea una fila de la base de datos a un objeto Wine con nombres en camelCase
- */
 function mapRowToWine(row) {
   if (!row) return null;
 
@@ -28,9 +25,6 @@ function mapRowToWine(row) {
   };
 }
 
-/**
- * Mapea un objeto Wine con nombres en camelCase a nombres de columna snake_case
- */
 function mapWineToColumns(wine) {
   return {
     id: wine.id,
@@ -159,21 +153,19 @@ export function createWine(userId, wineData) {
 export function updateWine(id, userId, partialData) {
   const db = getDatabase();
 
-  // Buscar el vino actual
   const existingWine = findByIdAndUser(id, userId);
 
   if (!existingWine) {
     return null;
   }
 
-  // Merge de datos actuales con los nuevos
   const updatedWine = {
     ...existingWine,
     ...partialData,
-    id: existingWine.id, // No permitir cambiar el ID
-    userId: existingWine.userId, // No permitir cambiar el userId
-    createdAt: existingWine.createdAt, // No permitir cambiar la fecha de creación
-    updatedAt: new Date().toISOString() // Actualizar timestamp
+    id: existingWine.id,
+    userId: existingWine.userId,
+    createdAt: existingWine.createdAt,
+    updatedAt: new Date().toISOString()
   };
 
   const columns = mapWineToColumns(updatedWine);

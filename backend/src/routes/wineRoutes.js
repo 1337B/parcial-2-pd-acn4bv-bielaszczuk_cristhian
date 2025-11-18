@@ -12,7 +12,6 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-// Todas las rutas de vinos requieren autenticación
 router.use(authMiddleware);
 
 // GET /api/wines - Obtener todos los vinos
@@ -21,7 +20,7 @@ router.get('/', getAllWines);
 // GET /api/wines/:id - Obtener un vino por ID
 router.get('/:id', getWineById);
 
-// POST /api/wines/:id/sommelier - Consultar con SommelIAr
+// POST /api/wines/:id/sommelier - Consultar con SommelIApp
 router.post('/:id/sommelier', getSommelierNotes);
 
 // POST /api/wines - Crear un nuevo vino

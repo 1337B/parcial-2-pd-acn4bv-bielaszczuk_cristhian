@@ -32,5 +32,5 @@ app.use(errorHandler);
 initializeDatabase();
 
 app.listen(PORT, () => {
-  console.log(`[${new Date().toISOString()}] SommelIAr backend listening on port ${PORT}`);
+  console.log(`[${new Date().toISOString()}] SommelIApp backend listening on port ${PORT}`);
 });

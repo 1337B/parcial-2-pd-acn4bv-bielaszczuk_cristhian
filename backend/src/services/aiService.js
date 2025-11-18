@@ -1,7 +1,3 @@
-/**
- * Servicio de IA para generar notas de sommelier usando OpenAI
- */
-
 import OpenAI from 'openai';
 
 /**
@@ -25,17 +21,14 @@ export async function generateSommelierNotes(wine) {
   try {
     console.log('Generando notas del sommelier con OpenAI GPT-4...');
 
-    // Inicializar cliente de OpenAI
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    // Construir el prompt con los datos del vino
     const prompt = buildPrompt(wine);
 
     const modelToUse = 'gpt-4o-mini';
 
-    // Generar contenido con OpenAI usando Chat Completions API
     const response = await client.chat.completions.create({
       model: modelToUse,
       messages: [
@@ -87,9 +80,6 @@ export async function generateSommelierNotes(wine) {
   }
 }
 
-/**
- * Construye el prompt para OpenAI solicitando análisis objetivo del vino
- */
 function buildPrompt(wine) {
   const {
     name,
@@ -109,7 +99,7 @@ function buildPrompt(wine) {
   if (year) prompt += `- Añada: ${year}\n`;
   if (region || country) prompt += `- Origen: ${region || ''}${region && country ? ', ' : ''}${country || ''}\n`;
 
-  prompt += `\n⚠️ IMPORTANTE: NO repitas información que haya proporcionado el usuario. Busca información OBJETIVA sobre este vino específico.\n\n`;
+  prompt += `\n IMPORTANTE: NO repitas información que haya proporcionado el usuario. Busca información OBJETIVA sobre este vino específico.\n\n`;
 
   prompt += `Por favor, proporciona un análisis estructurado con:\n\n`;
 
@@ -144,11 +134,7 @@ function buildPrompt(wine) {
   return prompt;
 }
 
-/**
- * Genera notas simuladas como fallback (versión anterior)
- */
 function generateSimulatedNotes(wine) {
-  // Construcción del texto simulado usando los datos reales del vino
   const {
     name,
     winery,
@@ -162,10 +148,8 @@ function generateSimulatedNotes(wine) {
     notes
   } = wine;
 
-  // Texto simulado estructurado como notas de sommelier
-  let sommelierText = `Analisis SommelIAr de "${name}"\n\n`;
+  let sommelierText = `Analisis SommelIApp de "${name}"\n\n`;
 
-  // Información básica
   sommelierText += `INFORMACION GENERAL:\n`;
   if (winery) sommelierText += `Bodega: ${winery}\n`;
   if (grape) sommelierText += `Cepa: ${grape}\n`;
@@ -175,7 +159,6 @@ function generateSimulatedNotes(wine) {
   }
   if (rating) sommelierText += `Calificacion personal: ${rating}/5 estrellas\n`;
 
-  // Perfil sensorial
   sommelierText += `\nPERFIL AROMATICO:\n`;
   if (aromas) {
     sommelierText += `${aromas}\n`;
@@ -190,15 +173,12 @@ function generateSimulatedNotes(wine) {
     sommelierText += `No se han registrado sabores especificos.\n`;
   }
 
-  // Notas personales del usuario
   if (notes) {
     sommelierText += `\nNOTAS PERSONALES:\n${notes}\n`;
   }
 
-  // Recomendaciones simuladas basadas en los datos
   sommelierText += `\nRECOMENDACIONES DEL SOMMELIER:\n`;
 
-  // Generar recomendación basada en la cepa
   if (grape) {
     const grapeRecommendations = {
       'Malbec': 'Ideal para acompañar carnes rojas a la parrilla, quesos curados o platos con salsas robustas.',
@@ -217,7 +197,6 @@ function generateSimulatedNotes(wine) {
     sommelierText += `Maridaje: ${recommendation}\n`;
   }
 
-  // Temperatura de servicio simulada
   sommelierText += `\nTemperatura de servicio recomendada: `;
   if (grape && ['Chardonnay', 'Sauvignon Blanc', 'Torrontés', 'Riesling'].includes(grape)) {
     sommelierText += `8-10°C (vino blanco)\n`;
@@ -226,61 +205,7 @@ function generateSimulatedNotes(wine) {
   }
 
   sommelierText += `\n---\n`;
-  sommelierText += `Estas notas han sido generadas por SommelIAr basandose en tus datos.\n`;
+  sommelierText += `Estas notas han sido generadas por SommelIApp basandose en tus datos.\n`;
 
   return sommelierText;
 }
-
-/**
- * INTEGRACIÓN FUTURA CON IA REAL
- *
- * Para integrar con un proveedor de IA como OpenAI, reemplazar la función anterior con algo como:
- *
- * export async function generateSommelierNotes(wine) {
- *   try {
- *     // Construir el prompt con los datos del vino
- *     const prompt = `
- *       Eres un sommelier experto. Genera notas profesionales para este vino:
- *       - Nombre: ${wine.name}
- *       - Bodega: ${wine.winery}
- *       - Cepa: ${wine.grape}
- *       - Año: ${wine.year}
- *       - Región: ${wine.region}, ${wine.country}
- *       - Aromas: ${wine.aromas}
- *       - Sabores: ${wine.flavors}
- *       - Notas: ${wine.notes}
- *
- *       Proporciona un análisis detallado, recomendaciones de maridaje y temperatura de servicio.
- *     `;
- *
- *     // Ejemplo con OpenAI API
- *     const response = await fetch('https://api.openai.com/v1/chat/completions', {
- *       method: 'POST',
- *       headers: {
- *         'Content-Type': 'application/json',
- *         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
- *       },
- *       body: JSON.stringify({
- *         model: 'gpt-3.5-turbo',
- *         messages: [
- *           { role: 'system', content: 'Eres un sommelier profesional experto en vinos.' },
- *           { role: 'user', content: prompt }
- *         ],
- *         temperature: 0.7,
- *         max_tokens: 500
- *       })
- *     });
- *
- *     const data = await response.json();
- *     return data.choices[0].message.content;
- *
- *   } catch (error) {
- *     console.error('Error al generar notas con IA:', error);
- *     // Fallback a notas simuladas en caso de error
- *     return generateSimulatedNotes(wine);
- *   }
- * }
- *
- * NOTA: Recordar agregar OPENAI_API_KEY al archivo .env
- */
-

@@ -1,7 +1,7 @@
 {
   "name": "sommelia-backend",
   "version": "1.0.0",
-  "description": "API for SommelIAr wine notes and AI sommelier helper",
+  "description": "API for SommelIApp wine notes and AI sommelier helper",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

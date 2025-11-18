@@ -10,14 +10,12 @@ export async function register(req, res, next) {
   try {
     const { email, password } = req.body;
 
-    // Validación básica
     if (!email || !password) {
       return res.status(400).json({
         error: 'Email y password son requeridos'
       });
     }
 
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -25,14 +23,12 @@ export async function register(req, res, next) {
       });
     }
 
-    // Validar longitud de password
     if (password.length < 6) {
       return res.status(400).json({
         error: 'El password debe tener al menos 6 caracteres'
       });
     }
 
-    // Verificar si el usuario ya existe
     const existingUser = findByEmail(email);
     if (existingUser) {
       return res.status(400).json({
@@ -40,7 +36,6 @@ export async function register(req, res, next) {
       });
     }
 
-    // Hashear password
     const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser = createUser(email, passwordHash);

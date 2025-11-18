@@ -1,9 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-/**
- * Middleware de autenticación JWT
- * Verifica el token en el header Authorization y agrega req.user
- */
 export function authMiddleware(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
@@ -33,7 +29,6 @@ export function authMiddleware(req, res, next) {
     // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Agregar usuario al request
     req.user = {
       id: decoded.id,
       email: decoded.email

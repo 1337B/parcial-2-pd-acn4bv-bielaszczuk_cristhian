@@ -140,23 +140,21 @@ export async function deleteWineHandler(req, res, next) {
 }
 
 /**
- * Consulta con SommelIAr - Genera notas de sommelier para un vino
+ * Consulta con SommelIApp - Genera notas de sommelier para un vino
  * @route POST /api/wines/:id/sommelier
  */
 export async function getSommelierNotes(req, res, next) {
   try {
     const userId = req.user.id;
     const { id } = req.params;
-    const { forceRegenerate } = req.query; // Opción para forzar regeneración
+    const { forceRegenerate } = req.query;
 
-    // Buscar el vino en la base de datos
     const wine = findByIdAndUser(id, userId);
 
     if (!wine) {
       return res.status(404).json({ error: 'Wine not found' });
     }
 
-    // Importar funciones del modelo de consultas
     const {
       findConsultationByWineId,
       createConsultation,
@@ -166,7 +164,6 @@ export async function getSommelierNotes(req, res, next) {
     let aiNotes;
     let fromCache = false;
 
-    // Verificar si ya existe una consulta previa (a menos que se fuerce regenerar)
     if (!forceRegenerate) {
       const existingConsultation = findConsultationByWineId(id);
 
@@ -177,15 +174,12 @@ export async function getSommelierNotes(req, res, next) {
       }
     }
 
-    // Si no hay consulta previa o se fuerza regenerar, llamar a la IA
     if (!aiNotes) {
       console.log(`Generando nueva consulta para vino ${id}`);
 
-      // Generar las notas del sommelier usando IA
       const { aiNotes: generatedNotes, prompt, modelUsed, tokensUsed } = await generateSommelierNotes(wine);
       aiNotes = generatedNotes;
 
-      // Guardar la consulta en la tabla de cache
       createConsultation(
         id,
         userId,
@@ -195,17 +189,13 @@ export async function getSommelierNotes(req, res, next) {
         tokensUsed
       );
 
-      // Marcar el vino como consultado
       markWineAsConsulted(id, userId);
 
-      // Persistir las notas en el campo ai_notes del vino
       updateWine(id, userId, { aiNotes });
     }
 
-    // Obtener el vino actualizado
     const updatedWine = findByIdAndUser(id, userId);
 
-    // Devolver las notas generadas
     res.json({
       data: {
         aiNotes,
