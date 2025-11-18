@@ -36,7 +36,7 @@ export async function getWineById(req, res, next) {
     const wine = findByIdAndUser(id, userId);
 
     if (!wine) {
-      return res.status(404).json({ error: 'Vino no encontrado' });
+      return res.status(404).json({ error: 'Wine not found' });
     }
 
     res.json({ data: wine });
@@ -103,7 +103,6 @@ export async function updateWineHandler(req, res, next) {
       aiNotes: req.body.aiNotes
     };
 
-    // Filtrar undefined para no pisar con nulls accidentales
     Object.keys(partialData).forEach(key => {
       if (partialData[key] === undefined) {
         delete partialData[key];
@@ -113,7 +112,7 @@ export async function updateWineHandler(req, res, next) {
     const updatedWine = updateWine(id, userId, partialData);
 
     if (!updatedWine) {
-      return res.status(404).json({ error: 'Vino no encontrado' });
+      return res.status(404).json({ error: 'Wine not found' });
     }
 
     res.json({ data: updatedWine });
@@ -135,10 +134,10 @@ export async function deleteWineHandler(req, res, next) {
     const deleted = deleteWine(id, userId);
 
     if (!deleted) {
-      return res.status(404).json({ error: 'Vino no encontrado' });
+      return res.status(404).json({ error: 'Wine not found' });
     }
 
-    res.status(204).send();
+    res.json({ message: 'Wine deleted successfully' });
   } catch (error) {
     next(error);
   }

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 
 import apiRouter from './routes/index.js';
 import { requestLogger } from './middlewares/requestLogger.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 import { initializeDatabase } from './database/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +26,8 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api', apiRouter);
+
+app.use(errorHandler);
 
 initializeDatabase();
 

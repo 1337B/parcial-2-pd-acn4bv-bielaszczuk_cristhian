@@ -38,7 +38,7 @@ Content-Type: application/json
 GET http://localhost:4000/api/wines/{id}
 ```
 
-### 5. Actualizar un vino
+### 5. Actualizar un vino (actualización parcial)
 ```bash
 PUT http://localhost:4000/api/wines/{id}
 Content-Type: application/json
@@ -54,16 +54,35 @@ Content-Type: application/json
 DELETE http://localhost:4000/api/wines/{id}
 ```
 
-## Campos obligatorios para crear vino
+**Respuesta exitosa:**
+```json
+{
+  "message": "Wine deleted successfully"
+}
+```
 
+**Respuesta 404:**
+```json
+{
+  "error": "Wine not found"
+}
+```
+
+## Campos obligatorios
+
+### Para crear vino (POST):
 - `name` (string, no vacío)
 - `grape` (string, no vacío)
 - `year` (integer, >= 1900)
 - `rating` (number, 0-5)
 
-## Ejemplo con cURL
+### Para actualizar vino (PUT):
+- Todos los campos son opcionales (actualización parcial)
+- Si se envían, deben cumplir las mismas reglas de validación
 
-### Crear vino
+## Ejemplos completos con cURL
+
+### 1. Crear un vino
 ```bash
 curl -X POST http://localhost:4000/api/wines \
   -H "Content-Type: application/json" \
@@ -72,12 +91,103 @@ curl -X POST http://localhost:4000/api/wines \
     "grape": "Malbec",
     "year": 2019,
     "rating": 4.8,
-    "country": "Argentina"
+    "country": "Argentina",
+    "region": "Mendoza"
   }'
 ```
 
-### Listar vinos
+### 2. Listar todos los vinos
 ```bash
 curl http://localhost:4000/api/wines
+```
+
+### 3. Obtener un vino específico (reemplaza ID_DEL_VINO)
+```bash
+curl http://localhost:4000/api/wines/ID_DEL_VINO
+```
+
+### 4. Actualizar un vino (actualización parcial)
+```bash
+curl -X PUT http://localhost:4000/api/wines/ID_DEL_VINO \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rating": 5,
+    "notes": "Mejoró después de decantar"
+  }'
+```
+
+### 5. Eliminar un vino
+```bash
+curl -X DELETE http://localhost:4000/api/wines/ID_DEL_VINO
+```
+
+## Flujo de prueba completo
+
+```bash
+# 1. Crear un vino y guardar el ID
+RESPONSE=$(curl -s -X POST http://localhost:4000/api/wines \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Luigi Bosca Malbec",
+    "grape": "Malbec",
+    "year": 2020,
+    "rating": 4.5,
+    "country": "Argentina"
+  }')
+
+echo "Vino creado: $RESPONSE"
+
+# Extraer el ID (necesita jq)
+WINE_ID=$(echo $RESPONSE | jq -r '.data.id')
+echo "ID del vino: $WINE_ID"
+
+# 2. Listar todos
+curl http://localhost:4000/api/wines
+
+# 3. Obtener el vino específico
+curl http://localhost:4000/api/wines/$WINE_ID
+
+# 4. Actualizar
+curl -X PUT http://localhost:4000/api/wines/$WINE_ID \
+  -H "Content-Type: application/json" \
+  -d '{"rating": 5, "notes": "Excelente con asado"}'
+
+# 5. Verificar actualización
+curl http://localhost:4000/api/wines/$WINE_ID
+
+# 6. Eliminar
+curl -X DELETE http://localhost:4000/api/wines/$WINE_ID
+
+# 7. Verificar que ya no existe (debe dar 404)
+curl http://localhost:4000/api/wines/$WINE_ID
+```
+
+## Casos de error
+
+### Crear vino sin campos obligatorios
+```bash
+curl -X POST http://localhost:4000/api/wines \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Vino sin grape"}'
+# Respuesta: 400 Bad Request
+```
+
+### Obtener vino inexistente
+```bash
+curl http://localhost:4000/api/wines/id-inexistente
+# Respuesta: 404 Not Found - {"error": "Wine not found"}
+```
+
+### Rating inválido
+```bash
+curl -X POST http://localhost:4000/api/wines \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test",
+    "grape": "Malbec",
+    "year": 2020,
+    "rating": 10
+  }'
+# Respuesta: 400 Bad Request - rating debe ser entre 0 y 5
 ```
 

@@ -6,7 +6,7 @@ import {
   updateWineHandler,
   deleteWineHandler
 } from '../controllers/wineController.js';
-import { validateWine } from '../middlewares/validateWine.js';
+import { validateWine, validateWineUpdate } from '../middlewares/validateWine.js';
 
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get('/:id', getWineById);
 router.post('/', validateWine, createWineHandler);
 
 // PUT /api/wines/:id - Actualizar un vino
-router.put('/:id', validateWine, updateWineHandler);
+router.put('/:id', validateWineUpdate, updateWineHandler);
 
 // DELETE /api/wines/:id - Eliminar un vino
 router.delete('/:id', deleteWineHandler);
