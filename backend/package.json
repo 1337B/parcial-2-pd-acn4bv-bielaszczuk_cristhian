@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18 <19"
   },
   "dependencies": {
     "openai": "^4.67.0",
