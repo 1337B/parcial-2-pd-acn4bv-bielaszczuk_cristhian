@@ -152,6 +152,60 @@ Ver guía completa en `AUTH_GUIDE.md`
 
 ---
 
+## 🍷 SommelIAr - Consulta con IA
+
+Sistema de generación de notas profesionales de sommelier
+
+### ¿Qué hace?
+Genera análisis profesional de vinos basándose en los datos reales guardados en SQLite:
+- Información general (bodega, cepa, año, región)
+- Perfil aromático y de sabores
+- Recomendaciones de maridaje según la cepa
+- Temperatura de servicio apropiada
+- Integración con notas personales del usuario
+
+### Endpoint
+```bash
+POST /api/wines/:id/sommelier
+Authorization: Bearer <token>
+```
+
+### Ejemplo rápido
+```bash
+# 1. Login
+TOKEN=$(curl -s -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}' | jq -r '.data.token')
+
+# 2. Crear vino
+WINE_ID=$(curl -s -X POST http://localhost:4000/api/wines \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Rutini Malbec",
+    "grape": "Malbec",
+    "year": 2020,
+    "aromas": "Frutas rojas, vainilla",
+    "flavors": "Ciruela, chocolate"
+  }' | jq -r '.data.id')
+
+# 3. Consultar con SommelIAr
+curl -X POST http://localhost:4000/api/wines/$WINE_ID/sommelier \
+  -H "Authorization: Bearer $TOKEN" | jq -r '.data.aiNotes'
+```
+
+### Características
+- ✅ Usa datos reales desde SQLite (no datos simulados)
+- ✅ Genera texto coherente y profesional
+- ✅ Recomendaciones específicas por cepa (Malbec, Chardonnay, etc.)
+- ✅ Persiste las notas en el campo `ai_notes`
+- ✅ Preparado para integración con IA real (OpenAI, etc.)
+
+### Documentación completa
+Ver `SOMMELIER_FEATURE.md` para documentación detallada de implementación
+
+---
+
 ## Troubleshooting
 
 ### El servidor no arranca
