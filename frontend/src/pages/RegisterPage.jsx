@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Label, TextInput, Button, Alert } from 'flowbite-react';
+import { HiMail, HiLockClosed, HiInformationCircle, HiCheckCircle } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 
 function RegisterPage() {
@@ -33,6 +35,7 @@ function RegisterPage() {
     const result = await register(email, password);
 
     if (result.success) {
+      // Login automatico exitoso, redirigir a /wines
       navigate('/wines');
     } else {
       setError(result.error || 'Error al registrarse');
@@ -41,88 +44,146 @@ function RegisterPage() {
     setLoading(false);
   };
 
+  // Verificar si las contraseñas coinciden para mostrar indicador visual
+  const passwordsMatch = password && confirmPassword && password === confirmPassword;
+  const passwordsDontMatch = password && confirmPassword && password !== confirmPassword;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-wine-900 via-wine-800 to-wine-950 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-cream-50 rounded-lg shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-wine-900 mb-2">SommelIAr</h1>
-          <p className="text-wine-700">Crea tu cuenta</p>
-        </div>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-wine-900 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-wine-200 rounded-lg focus:ring-2 focus:ring-wine-500 focus:border-transparent"
-              placeholder="tu@email.com"
-              required
-              disabled={loading}
-            />
+    <div className="min-h-screen bg-gradient-to-br from-wine-900 via-wine-800 to-wine-950 flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full">
+        <div className="bg-cream-50 rounded-xl shadow-2xl p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-wine-900 mb-2">SommelIAr</h1>
+            <p className="text-wine-700">Crea tu cuenta</p>
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-wine-900 mb-2">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-wine-200 rounded-lg focus:ring-2 focus:ring-wine-500 focus:border-transparent"
-              placeholder="••••••••"
-              required
-              minLength={6}
-              disabled={loading}
-            />
+          {/* Error Alert */}
+          {error && (
+            <Alert color="failure" icon={HiInformationCircle} className="mb-6">
+              <span className="font-medium">Error:</span> {error}
+            </Alert>
+          )}
+
+          {/* Form */}
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Email Input */}
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="email" value="Email" className="text-wine-900 font-medium" />
+              </div>
+              <TextInput
+                id="email"
+                type="email"
+                icon={HiMail}
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+                color="gray"
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="password" value="Contraseña" className="text-wine-900 font-medium" />
+              </div>
+              <TextInput
+                id="password"
+                type="password"
+                icon={HiLockClosed}
+                placeholder="Minimo 6 caracteres"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                disabled={loading}
+                color="gray"
+                helperText={
+                  <span className="text-xs text-gray-600">
+                    Debe tener al menos 6 caracteres
+                  </span>
+                }
+              />
+            </div>
+
+            {/* Confirm Password Input */}
+            <div>
+              <div className="mb-2 block">
+                <Label
+                  htmlFor="confirmPassword"
+                  value="Confirmar Contraseña"
+                  className="text-wine-900 font-medium"
+                />
+              </div>
+              <TextInput
+                id="confirmPassword"
+                type="password"
+                icon={passwordsMatch ? HiCheckCircle : HiLockClosed}
+                placeholder="Repeti tu contraseña"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                disabled={loading}
+                color={passwordsMatch ? 'success' : passwordsDontMatch ? 'failure' : 'gray'}
+                helperText={
+                  passwordsDontMatch ? (
+                    <span className="text-xs text-red-600">Las contraseñas no coinciden</span>
+                  ) : passwordsMatch ? (
+                    <span className="text-xs text-green-600">Las contraseñas coinciden</span>
+                  ) : null
+                }
+              />
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={loading || passwordsDontMatch}
+              isProcessing={loading}
+              processingSpinner={
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              }
+              className="w-full bg-wine-700 hover:bg-wine-800 focus:ring-4 focus:ring-wine-300 mt-6"
+            >
+              {loading ? 'Creando cuenta...' : 'Registrarse'}
+            </Button>
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-wine-700">
+              Ya tenes cuenta?{' '}
+              <Link
+                to="/login"
+                className="font-semibold text-wine-900 hover:text-wine-700 hover:underline"
+              >
+                Inicia sesion aqui
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-wine-900 mb-2">
-              Confirmar Contraseña
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-wine-200 rounded-lg focus:ring-2 focus:ring-wine-500 focus:border-transparent"
-              placeholder="••••••••"
-              required
-              minLength={6}
-              disabled={loading}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-wine-700 hover:bg-wine-800 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-wine-700">
-            Ya tienes cuenta?{' '}
-            <Link to="/login" className="font-semibold text-wine-900 hover:text-wine-700">
-              Inicia sesion
-            </Link>
-          </p>
         </div>
       </div>
     </div>
