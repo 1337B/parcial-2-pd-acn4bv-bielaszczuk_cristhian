@@ -1,5 +1,9 @@
 # SommelIApp - Plataforma de Gestión de Vinos con Sommelier IA
 
+> Documentación académica completa: [INFORME.md](./INFORME.md)
+> 
+> Demo en producción: [https://sommeliapp.vercel.app/login](https://sommeliapp.vercel.app/login) (frontend en Vercel, backend en Render)
+
 ## Descripción
 
 SommelIApp es una aplicación web full-stack que permite a los usuarios gestionar su colección personal de vinos y obtener análisis profesionales generados por inteligencia artificial. La plataforma combina un sistema completo de gestión de vinos (CRUD) con la capacidad de consultar a un sommelier virtual basado en OpenAI para obtener análisis detallados de aromas, sabores, maridajes y recomendaciones.
@@ -550,6 +554,10 @@ npm start
 3. Agregar variable de entorno:
    - `VITE_API_URL`: URL de tu backend en Render
 
+### Accesos rápidos
+- Frontend (Vercel): https://sommeliapp.vercel.app/login
+- Backend (Render API base): https://<tu-backend>.onrender.com/api
+
 ## Variables de Entorno
 
 ### Backend (.env)
@@ -675,4 +683,3 @@ Cristhian Bielaszczuk
 ## Fecha
 
 Noviembre 2025
-
