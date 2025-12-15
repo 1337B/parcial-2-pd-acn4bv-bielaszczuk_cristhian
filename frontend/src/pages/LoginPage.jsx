@@ -113,7 +113,7 @@ function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-wine-700">
               No tenes cuenta?{' '}
               <Link
@@ -121,6 +121,14 @@ function LoginPage() {
                 className="font-semibold text-wine-900 hover:text-wine-700 hover:underline"
               >
                 Registrate aqui
+              </Link>
+            </p>
+            <p className="text-sm text-wine-700">
+              <Link
+                to="/about"
+                className="font-semibold text-wine-900 hover:text-wine-700 hover:underline"
+              >
+                Conoce más sobre SommelIApp
               </Link>
             </p>
           </div>

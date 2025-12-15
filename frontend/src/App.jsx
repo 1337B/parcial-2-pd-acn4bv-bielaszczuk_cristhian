@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import WineListPage from './pages/WineListPage';
 import WineDetailPage from './pages/WineDetailPage';
 import WineFormPage from './pages/WineFormPage';
+import AboutPage from './pages/AboutPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route
           path="/wines"
           element={

@@ -26,6 +26,7 @@ SommelIApp es una aplicación web full-stack que permite a los usuarios gestiona
 
 ### Interfaz de Usuario
 - **Diseño responsive**: Adaptado para desktop, tablet y móvil
+- **Página "Acerca de"**: Presentación elegante de la aplicación con imágenes de vinos
 - **Paleta temática**: Colores inspirados en el vino (tonos bordo y crema)
 - **Menú hamburguesa**: Navegación optimizada para móviles
 - **Animaciones**: Loader personalizado con racimo de uvas durante consultas IA
@@ -147,6 +148,9 @@ p2-pd/
 │   │   ├── App.jsx                  # Componente principal + routing
 │   │   ├── index.css                # Estilos globales + Tailwind
 │   │   ├── assets/                  # Assets estáticos
+│   │   │   ├── bottles.jpg          # Imagen botellas de vino
+│   │   │   ├── corchos.jpg          # Imagen corchos
+│   │   │   ├── cupsofwine.jpg       # Imagen copas de vino
 │   │   │   ├── grapes.svg           # Loader IA
 │   │   │   ├── nose.svg             # Icono aromas
 │   │   │   └── wineglass.svg        # Icono vino
@@ -163,6 +167,7 @@ p2-pd/
 │   │   ├── pages/                   # Páginas principales
 │   │   │   ├── LoginPage.jsx        # Login
 │   │   │   ├── RegisterPage.jsx     # Registro
+│   │   │   ├── AboutPage.jsx        # Acerca de SommelIApp
 │   │   │   ├── WineListPage.jsx     # Lista de vinos
 │   │   │   ├── WineDetailPage.jsx   # Detalle + consulta IA
 │   │   │   └── WineFormPage.jsx     # Crear/editar vino
@@ -556,7 +561,7 @@ npm start
 
 ### Accesos rápidos
 - Frontend (Vercel): https://sommeliapp.vercel.app/login
-- Backend (Render API base): https://<tu-backend>.onrender.com/api
+- Backend (Render API base): https://dashboard.render.com/project/prj-d4eg1h75r7bs73fp1h6g
 
 ## Variables de Entorno
 
@@ -670,7 +675,7 @@ npm run preview  # Preview del build local
 
 ## Contribución
 
-Este proyecto fue desarrollado como parte del parcial de "Plataformas de Desarrollo 2".
+Este proyecto fue desarrollado como parte del final de "Plataformas de Desarrollo 2".
 
 ## Licencia
 

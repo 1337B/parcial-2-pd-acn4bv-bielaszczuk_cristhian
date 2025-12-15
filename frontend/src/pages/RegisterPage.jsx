@@ -166,7 +166,7 @@ function RegisterPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-wine-700">
               Ya tenes cuenta?{' '}
               <Link
@@ -174,6 +174,14 @@ function RegisterPage() {
                 className="font-semibold text-wine-900 hover:text-wine-700 hover:underline"
               >
                 Inicia sesion aqui
+              </Link>
+            </p>
+            <p className="text-sm text-wine-700">
+              <Link
+                to="/about"
+                className="font-semibold text-wine-900 hover:text-wine-700 hover:underline"
+              >
+                Conoce más sobre SommelIApp
               </Link>
             </p>
           </div>
